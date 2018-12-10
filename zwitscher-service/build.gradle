@@ -5,13 +5,15 @@ jar {
 
 dependencies {
     compile 'org.springframework.cloud:spring-cloud-starter-config'
-    compile 'org.springframework.cloud:spring-cloud-starter-eureka'
+    implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
 
     compile 'org.springframework.boot:spring-boot-starter-aop'
     compile 'org.springframework.retry:spring-retry'
 
-    compile 'org.springframework.social:spring-social-twitter'
+    compile('org.springframework.social:spring-social-twitter:2.0.0.M4')
 
-    compile 'org.springframework.cloud:spring-cloud-starter-feign'
-    compile 'org.springframework.cloud:spring-cloud-starter-hystrix'
+    compile 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    compile 'org.springframework.cloud:spring-cloud-starter-netflix-hystrix'
+    compile 'org.springframework.boot:spring-boot-starter-actuator'
+
 }

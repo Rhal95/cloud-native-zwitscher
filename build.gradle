@@ -1,118 +1,73 @@
 buildscript {
     ext {
-        springBootVersion = '1.3.7.RELEASE'
+        springBootVersion = '2.1.0.RELEASE'
     }
     repositories {
         mavenCentral()
-        jcenter()
-        maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
-        classpath "nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0"
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
-        classpath 'com.bmuschko:gradle-docker-plugin:2.6.6'
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath "io.spring.gradle:dependency-management-plugin:0.5.2.RELEASE"
+        classpath 'com.bmuschko:gradle-tomcat-plugin:2.5'
     }
+
+
+}
+
+plugins {
+    id 'io.franzbecker.gradle-lombok' version '1.14'
+    id 'org.springframework.boot' version '2.0.6.RELEASE'
 }
 
 allprojects {
-    apply plugin: 'com.bmuschko.docker-remote-api'
-
-    docker {
-        url = System.env.DOCKER_HOST?.replace('tcp', 'https') ?: 'https://192.168.99.100:2376'
-        certPath = file("${System.getProperty('user.home')}/.docker/machine/machines/default")
-
-        registryCredentials {
-            url = 'qaware-oss-docker-registry.bintray.io'
-            username = project.hasProperty('bintrayUsername') ? project.bintrayUsername : 'qaware-oss'
-            password = project.hasProperty('bintrayApiKey') ? project.bintrayApiKey : ''
-            email = 'qaware-oss@qaware.de'
-        }
-    }
-
     repositories {
         mavenCentral()
-        maven { url "https://repo.spring.io/snapshot" }
         maven { url "https://repo.spring.io/milestone" }
         jcenter()
     }
 }
 
+
 subprojects {
     apply plugin: 'java'
-    apply plugin: 'spring-boot'
-    apply plugin: "com.github.hierynomus.license"
+    apply plugin: 'idea'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
 
-    license {
-        skipExistingHeaders = true
-        header rootProject.file('LICENSE')
-        includes(["**/*.java"])
-        mapping {
-            java = 'SLASHSTAR_STYLE'
+    lombok {
+        sha256 = ""
+    }
+
+
+
+    ext {
+        springCloudVersion = 'Greenwich.M3'
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
         }
     }
 
     group = 'de.qaware.cloud.nativ.zwitscher'
-    version = '1.2.0'
+    version = '1.3.0'
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
-    dependencyManagement {
-        imports {
-            mavenBom "org.springframework.cloud:spring-cloud-dependencies:Brixton.SR6"
-        }
-    }
-
-    configurations {
-        compile.exclude module: 'spring-boot-starter-tomcat'
-    }
-
     dependencies {
-        compile 'org.springframework.boot:spring-boot-starter-undertow'
-
-        compile 'org.springframework.boot:spring-boot-starter-actuator'
-        compile 'org.springframework.boot:spring-boot-starter-hateoas'
-
-        compile 'org.projectlombok:lombok:1.16.6'
-
-        testCompile 'org.springframework.boot:spring-boot-starter-test'
-        testCompile 'junit:junit:4.12'
-        testCompile 'org.hamcrest:hamcrest-library:1.3'
+        implementation('org.springframework.boot:spring-boot-starter-web')
+        implementation('org.springframework.cloud:spring-cloud-starter')
+        implementation('org.springframework.cloud:spring-cloud-starter-config')
+        runtimeOnly('org.springframework.boot:spring-boot-starter-tomcat')
+        annotationProcessor('org.projectlombok:lombok')
+        compileOnly('org.projectlombok:lombok')
+        testCompile('org.springframework.boot:spring-boot-starter-test')
+        testCompile('org.springframework.boot:spring-boot-test-autoconfigure')
+        runtime("org.springframework.boot:spring-boot-properties-migrator")
     }
 
-    springBoot {
-        executable = true
-    }
 
-    test {
-        reports {
-            junitXml.enabled = false
-            html.enabled = true
-        }
-    }
-
-    task buildDockerImage(type: DockerBuildImage) {
-        inputDir = projectDir
-        noCache = false
-        remove = true
-        tag = "$project.name:$version"
-    }
-
-    task removeDockerImage(type: DockerRemoveImage) {
-        imageId = "$project.name:$version"
-    }
-
-    task pushDockerImage(type: DockerPushImage) {
-        imageName = "qaware-oss-docker-registry.bintray.io/zwitscher/$project.name:$version"
-    }
 }
-
-import com.bmuschko.gradle.docker.tasks.DockerInfo
-import com.bmuschko.gradle.docker.tasks.DockerVersion
-import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
-import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
-import com.bmuschko.gradle.docker.tasks.image.DockerRemoveImage
-
-task dockerInfo(type: DockerInfo) {}
-task dockerVersion(type: DockerVersion) {}
 

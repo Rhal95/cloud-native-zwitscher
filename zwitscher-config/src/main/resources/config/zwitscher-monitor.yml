@@ -4,16 +4,15 @@ turbine:
   clusterNameExpression: appGroupName
   aggregator:
     clusterConfig: ZWITSCHER
-
-endpoints:
-  info:
-    enabled: true
-  shutdown:
-    enabled: true
-  health:
-    enabled: true
-    sensitive: false
-
+management:
+  endpoints:
+    info:
+      enabled: true
+    shutdown:
+      enabled: true
+    health:
+      enabled: true
+  server.servlet.context-path: /admin
 logging:
   level:
     com.netflix.discovery: INFO
@@ -21,13 +20,13 @@ logging:
     org.springframework.cloud: INFO
     org.springframework.web: INFO
 
-management:
-  context-path: /admin
+
+
 
 eureka:
   instance:
     # register with IP addresses (required for deployment in Kubernetes?)
     preferIpAddress: true
     leaseRenewalIntervalInSeconds: 10
-    statusPageUrlPath: ${management.context-path}/info
-    healthCheckUrlPath: ${management.context-path}/health
+    statusPageUrlPath: ${management.server.servlet.context-path}/info
+    healthCheckUrlPath: ${management.server.servlet.context-path}/health

@@ -27,40 +27,24 @@ import de.qaware.cloud.nativ.zwitscher.service.quote.QuotesOnDesignClient;
 import de.qaware.cloud.nativ.zwitscher.service.quote.RandomQuote;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.social.twitter.api.Twitter;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = ZwitscherServiceApplicationTests.MockTwitterConfiguration.class)
-@WebAppConfiguration
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = ZwitscherServiceApplication.class)
 @TestPropertySource("classpath:/application-test.properties")
 public class ZwitscherServiceApplicationTests {
 
-    @Configuration
-    @Import(ZwitscherServiceApplication.class)
-    public static class MockTwitterConfiguration {
-        @Bean
-        public Twitter twitter() {
-            return Mockito.mock(Twitter.class);
-        }
 
-    }
-
+    @Qualifier("quotesOnDesign")
     @Autowired
-    @Qualifier("de.qaware.cloud.nativ.zwitscher.service.quote.QuotesOnDesignClient")
     private QuotesOnDesignClient quoteClient;
 
     @Test
@@ -68,7 +52,7 @@ public class ZwitscherServiceApplicationTests {
     }
 
     @Test
-    public void testQuotesOnDesignFeignClient() throws Exception {
+    public void testQuotesOnDesignFeignClient() {
         RandomQuote quote = quoteClient.getRandomQuote();
         assertThat(quote, is(notNullValue()));
 

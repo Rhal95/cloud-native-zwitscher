@@ -49,7 +49,6 @@ public class ZwitscherMonitorApplication {
     }
 
     public static void main(String[] args) {
-        new SpringApplicationBuilder(ZwitscherMonitorApplication.class)
-                .web(true).run(args);
+        new SpringApplicationBuilder(ZwitscherMonitorApplication.class).run(args);
     }
 }

@@ -5,16 +5,15 @@ server:
   port: 8761
 
 management:
-  context-path: /admin
-
-endpoints:
-  info:
-    enabled: true
-  shutdown:
-    enabled: true
-  health:
-    enabled: true
-    sensitive: false
+  server.servlet:
+    context-path: /admin
+  endpoint:
+    info:
+      enabled: true
+    shutdown:
+      enabled: true
+    health:
+      enabled: true
 
 eureka:
   client:

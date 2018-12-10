@@ -24,6 +24,7 @@
 package de.qaware.cloud.nativ.zwitscher.service.tweet;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.social.twitter.api.Twitter;
@@ -33,6 +34,7 @@ import org.springframework.social.twitter.api.impl.TwitterTemplate;
  * A custom configuration to initialize the Twitter template.
  */
 @Configuration
+@ConditionalOnProperty(value = {"spring.social.twitter.appId", "spring.social.twitter.appSecret"})
 public class SocialZwitscherConfiguration {
     @Bean
     public Twitter twitter(final @Value("${spring.social.twitter.appId}") String appId,
