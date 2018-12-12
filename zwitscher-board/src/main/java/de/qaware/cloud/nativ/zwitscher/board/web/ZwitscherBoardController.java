@@ -23,9 +23,7 @@
  */
 package de.qaware.cloud.nativ.zwitscher.board.web;
 
-import de.qaware.cloud.nativ.zwitscher.board.domain.Quote;
 import de.qaware.cloud.nativ.zwitscher.board.domain.QuoteRepository;
-import de.qaware.cloud.nativ.zwitscher.board.domain.Zwitscher;
 import de.qaware.cloud.nativ.zwitscher.board.domain.ZwitscherRepository;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,19 +35,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Collection;
-
 /**
  * The main UI controller for the Zwitscher board interface.
  */
 @Controller
 public class ZwitscherBoardController {
 
-    @Autowired
-    @Qualifier("de.qaware.cloud.nativ.zwitscher.board.domain.QuoteRepository")
     private QuoteRepository quoteRepository;
 
-    @Autowired
+
     private ZwitscherRepository zwitscherRepository;
 
     @Value("${board.title}")
@@ -57,6 +51,12 @@ public class ZwitscherBoardController {
 
     @Value("${board.headline}")
     private String headline;
+
+    @Autowired
+    public ZwitscherBoardController(@Qualifier("zwitscher-service") QuoteRepository quoteRepository, ZwitscherRepository zwitscherRepository) {
+        this.quoteRepository = quoteRepository;
+        this.zwitscherRepository = zwitscherRepository;
+    }
 
     /**
      * Renders the one and only Zwitscher board UI.
@@ -88,13 +88,12 @@ public class ZwitscherBoardController {
     private void populateDefault(Model viewModel) {
         viewModel.addAttribute("title", title);
         viewModel.addAttribute("headline", headline);
-
-        Quote quote = quoteRepository.getNextQuote();
-        viewModel.addAttribute("quote", quote);
+        quoteRepository.getNextQuote().subscribe(q -> viewModel.addAttribute("quote", q));
     }
 
     private void populateTweets(String q, Model viewModel) {
-        Collection<Zwitscher> tweets = zwitscherRepository.findByQ(q);
-        viewModel.addAttribute("tweets", tweets);
+        zwitscherRepository
+                .findByQ(q)
+                .subscribe(tweets -> viewModel.addAttribute("tweets", tweets));
     }
 }

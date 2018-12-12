@@ -25,13 +25,11 @@ package de.qaware.cloud.nativ.zwitscher.service.quote;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 /**
  * A REST controller to produce random quotes. The client used here is a feign client
@@ -41,13 +39,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/quote")
 public class RandomQuoteController {
 
-    @Autowired
-    @Qualifier("de.qaware.cloud.nativ.zwitscher.service.quote.QuotesOnDesignClient")
     private QuotesOnDesignClient quoteClient;
 
+    @Autowired
+    public RandomQuoteController(@Qualifier("quotesOnDesign") QuotesOnDesignClient quoteClient) {
+        this.quoteClient = quoteClient;
+    }
+
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public HttpEntity<RandomQuote> quote() {
-        RandomQuote quote = quoteClient.getRandomQuote();
-        return new ResponseEntity<>(quote, HttpStatus.OK);
+    public Mono<RandomQuote> quote() {
+        return quoteClient.getRandomQuote();
     }
 }

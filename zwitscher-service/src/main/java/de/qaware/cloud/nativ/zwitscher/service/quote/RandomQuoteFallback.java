@@ -25,6 +25,7 @@ package de.qaware.cloud.nativ.zwitscher.service.quote;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 /**
  * A fallback implementation for the QuotesOnDesignClient.
@@ -33,8 +34,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class RandomQuoteFallback implements QuotesOnDesignClient {
     @Override
-    public RandomQuote getRandomQuote() {
+    public Mono<RandomQuote> getRandomQuote() {
         log.warn("Using fallback for RandomQuote.");
-        return new RandomQuote("Everything fails all the time.", "Unknown");
+        return Mono.just(new RandomQuote("Everything fails all the time.", "Unknown"));
     }
 }

@@ -26,15 +26,10 @@ package de.qaware.cloud.nativ.zwitscher.board.domain;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 
 /**
  * The ZwitscherRepository uses a load balanced RestTemplate to access the /tweets, the
@@ -43,11 +38,6 @@ import java.util.Collections;
 @Repository
 @Slf4j
 public class ZwitscherRepository {
-
-    @Autowired
-    @LoadBalanced
-    private RestTemplate restTemplate;
-
     @Value("${board.zwitscherUrl}")
     private String tweetsRibbonUrl;
 
@@ -58,11 +48,13 @@ public class ZwitscherRepository {
      * @return the tweets, never NULL
      */
     @HystrixCommand(fallbackMethod = "none")
-    public Collection<Zwitscher> findByQ(final @Length(max = 500) String q) {
+    public Flux<Zwitscher> findByQ(final @Length(max = 500) String q) {
         log.info("Get Zwitscher message from /tweets using q={}.", q);
-
-        Zwitscher[] tweets = restTemplate.getForObject(tweetsRibbonUrl, Zwitscher[].class, q);
-        return Arrays.asList(tweets);
+        return WebClient.create()
+                .get()
+                .uri(tweetsRibbonUrl, q)
+                .retrieve()
+                .bodyToFlux(Zwitscher.class);
     }
 
     /**
@@ -71,8 +63,8 @@ public class ZwitscherRepository {
      * @param q the query, not used actually
      * @return empty collection
      */
-    protected Collection<Zwitscher> none(final String q) {
+    protected Flux<Zwitscher> none(final String q) {
         log.warn("Using fallback for Zwitscher messages.");
-        return Collections.emptyList();
+        return Flux.empty();
     }
 }

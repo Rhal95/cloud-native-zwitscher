@@ -28,6 +28,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 /**
  * A simple quote data class. Also defines the fallback implementation.
@@ -44,9 +45,9 @@ public class Quote {
     @Slf4j
     static class Fallback implements QuoteRepository {
         @Override
-        public Quote getNextQuote() {
-            log.warn("Using fallback quote.");
-            return new Quote("Everything fails all the time.", "Unknown");
+        public Mono<Quote> getNextQuote() {
+            log.warn("Using fallback Quote");
+            return Mono.just(new Quote("Everything fails all the time.", "Unknown"));
         }
     }
 }

@@ -26,6 +26,7 @@ package de.qaware.cloud.nativ.zwitscher.service.quote;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import reactor.core.publisher.Mono;
 
 /**
  * A declarative Feign REST client to access the external Quotes on Design service.
@@ -40,7 +41,7 @@ public interface QuotesOnDesignClient {
      * @return a random quote
      */
     @RequestMapping(method = RequestMethod.GET, value = "/api/3.0/api-3.0.json")
-    RandomQuote getRandomQuote();
+    Mono<RandomQuote> getRandomQuote();
 }
 
 

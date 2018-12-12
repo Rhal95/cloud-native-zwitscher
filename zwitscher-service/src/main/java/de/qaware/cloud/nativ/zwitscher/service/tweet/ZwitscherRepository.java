@@ -23,7 +23,7 @@
  */
 package de.qaware.cloud.nativ.zwitscher.service.tweet;
 
-import java.util.Collection;
+import reactor.core.publisher.Flux;
 
 /**
  * The ZwitscherRepository provides methods to work with ZwitscherMessages.
@@ -36,5 +36,5 @@ public interface ZwitscherRepository {
      * @param pageSize the number of messages to return
      * @return a collection of ZwitscherMessages
      */
-    Collection<ZwitscherMessage> search(String q, int pageSize);
+    Flux<ZwitscherMessage> search(String q, int pageSize);
 }

@@ -26,6 +26,7 @@ package de.qaware.cloud.nativ.zwitscher.board.domain;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import reactor.core.publisher.Mono;
 
 /**
  * The feign client to access the /quote service from our zwitscher-service. Feign
@@ -40,5 +41,5 @@ public interface QuoteRepository {
      * @return the quote
      */
     @RequestMapping(method = RequestMethod.GET, value = "/quote")
-    Quote getNextQuote();
+    Mono<Quote> getNextQuote();
 }

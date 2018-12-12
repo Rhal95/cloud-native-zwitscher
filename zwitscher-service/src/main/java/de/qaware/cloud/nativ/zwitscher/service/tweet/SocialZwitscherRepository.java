@@ -29,14 +29,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
-import org.springframework.social.twitter.api.SearchResults;
 import org.springframework.social.twitter.api.Twitter;
 import org.springframework.stereotype.Repository;
-
-import java.util.Collection;
-import java.util.Collections;
-
-import static java.util.stream.Collectors.toList;
+import reactor.core.publisher.Flux;
 
 /**
  * This implementation uses Spring Social Twitter API to access tweets
@@ -51,16 +46,16 @@ public class SocialZwitscherRepository implements ZwitscherRepository, HealthInd
 
     @Override
     @HystrixCommand(fallbackMethod = "noResults")
-    public Collection<ZwitscherMessage> search(String q, int pageSize) {
-        SearchResults results = twitter.searchOperations().search(q, pageSize);
-        return results.getTweets().stream()
-                .map(t -> new ZwitscherMessage(t.getUnmodifiedText()))
-                .collect(toList());
+    public Flux<ZwitscherMessage> search(String q, int pageSize) {
+        //check if this breaks out of the reactive environment
+        //if this is 'bad' we may have to supply an own twitter api implementation
+        return Flux.fromIterable(twitter.searchOperations().search(q, pageSize).getTweets())
+                .map(t -> new ZwitscherMessage(t.getUnmodifiedText()));
     }
 
-    protected Collection<ZwitscherMessage> noResults(String q, int pageSize) {
+    protected Flux<ZwitscherMessage> noResults(String q, int pageSize) {
         log.warn("Using fallback ZwitscherMessage results.");
-        return Collections.emptyList();
+        return Flux.empty();
     }
 
     @Override
