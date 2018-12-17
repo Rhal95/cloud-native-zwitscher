@@ -23,7 +23,7 @@
  */
 package de.qaware.cloud.nativ.zwitscher.service.quote;
 
-import org.springframework.stereotype.Controller;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import reactor.core.publisher.Mono;
@@ -31,7 +31,9 @@ import reactor.core.publisher.Mono;
 /**
  * A declarative Feign REST client to access the external Quotes on Design service.
  */
-@Controller
+@FeignClient(name = "quotesOnDesign", url = "http://quotesondesign.com",
+        configuration = QuotesOnDesignConfiguration.class,
+        fallback = RandomQuoteFallback.class)
 public interface QuotesOnDesignClient {
     /**
      * Obtain a random quote by GET /api/3.0/api-3.0.json

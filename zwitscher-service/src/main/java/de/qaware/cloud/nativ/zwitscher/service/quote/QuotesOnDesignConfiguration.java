@@ -39,7 +39,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
  * Custom configuration component required for the QuotesOnDesign feign client.
  */
 @Configuration
-public class QuotesOnDesignFeignConfiguration {
+public class QuotesOnDesignConfiguration {
     @Bean
     public Decoder feignDecoder() {
         HttpMessageConverter jacksonConverter = new QuoteOnDesignMessageConverter();
