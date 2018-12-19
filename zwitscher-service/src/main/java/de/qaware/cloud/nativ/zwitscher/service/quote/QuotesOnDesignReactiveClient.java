@@ -12,12 +12,8 @@ import java.util.HashMap;
 @Component(value = "quotesOnDesign")
 public class QuotesOnDesignReactiveClient implements QuotesOnDesignClient {
 
-    WebClient quotesOnDesign;
-
-    public QuotesOnDesignReactiveClient() {
-        this.quotesOnDesign = WebClient.create("http://quotesondesign.com");
-    }
-
+    private WebClient quotesOnDesign = WebClient.create("http://quotesondesign.com");
+    ;
 
     public Mono<RandomQuote> getRandomQuote() {
         return quotesOnDesign

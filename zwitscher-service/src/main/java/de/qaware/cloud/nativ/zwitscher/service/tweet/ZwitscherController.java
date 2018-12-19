@@ -29,9 +29,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import reactor.core.publisher.Flux;
 
 /**
@@ -52,7 +53,8 @@ public class ZwitscherController {
      * @param pageSize the number of messages to be returned
      * @return list of found Zwitscher messages
      */
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
     public Flux<ZwitscherMessage> tweets(@RequestParam("q") String q,
                                          @RequestParam(value = "pageSize", required = false, defaultValue = "50")
                                                            int pageSize) {
