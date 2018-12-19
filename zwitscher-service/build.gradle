@@ -10,9 +10,9 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-aop'
     compile 'org.springframework.retry:spring-retry'
 
-    compile('org.springframework.social:spring-social-twitter:2.0.0.M4')
-
-    compile 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    compile('org.springframework.social:spring-social-twitter:2.0.0.M4'){
+        exclude group: 'org.springframework', module: 'spring-webmvc'
+    }
     compile 'org.springframework.cloud:spring-cloud-starter-netflix-hystrix'
     compile 'org.springframework.boot:spring-boot-starter-actuator'
 }

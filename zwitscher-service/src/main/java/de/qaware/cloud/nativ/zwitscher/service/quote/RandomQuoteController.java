@@ -26,16 +26,16 @@ package de.qaware.cloud.nativ.zwitscher.service.quote;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 /**
  * A REST controller to produce random quotes. The client used here is a feign client
  * that goes against a public quote API service.
  */
-@RestController
+@Controller
 @RequestMapping("/quote")
 public class RandomQuoteController {
 
