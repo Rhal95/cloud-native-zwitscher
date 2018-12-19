@@ -63,6 +63,7 @@ subprojects {
         annotationProcessor('org.projectlombok:lombok')
         compileOnly('org.projectlombok:lombok')
         testCompile('org.springframework.boot:spring-boot-starter-test')
+        testCompile('org.springframework.cloud:spring-cloud-contract-wiremock')
         testCompile('org.springframework.boot:spring-boot-test-autoconfigure')
         runtime("org.springframework.boot:spring-boot-properties-migrator")
     }

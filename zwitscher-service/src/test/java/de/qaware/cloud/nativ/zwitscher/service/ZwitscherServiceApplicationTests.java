@@ -33,9 +33,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ZwitscherServiceApplication.class)
@@ -53,10 +52,10 @@ public class ZwitscherServiceApplicationTests {
 
     @Test
     public void testQuotesOnDesignFeignClient() {
-        RandomQuote quote = quoteClient.getRandomQuote();
-        assertThat(quote, is(notNullValue()));
+        RandomQuote quote = quoteClient.getRandomQuote().block();
+        assertThat(quote).isNotNull();
 
-        assertThat(quote.getQuote(), is(notNullValue()));
-        assertThat(quote.getAuthor(), is(notNullValue()));
+        assertThat(quote.getQuote()).isNotNull();
+        assertThat(quote.getAuthor()).isNotNull();
     }
 }
