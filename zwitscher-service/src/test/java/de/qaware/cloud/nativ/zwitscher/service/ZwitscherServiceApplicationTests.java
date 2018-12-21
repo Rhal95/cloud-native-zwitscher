@@ -24,16 +24,12 @@
 package de.qaware.cloud.nativ.zwitscher.service;
 
 import de.qaware.cloud.nativ.zwitscher.service.quote.QuotesOnDesignClient;
-import de.qaware.cloud.nativ.zwitscher.service.quote.RandomQuote;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 
 @RunWith(SpringRunner.class)
@@ -41,8 +37,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles({"test", "native"})
 public class ZwitscherServiceApplicationTests {
 
-
-    @Qualifier("quotesOnDesign")
     @Autowired
     private QuotesOnDesignClient quoteClient;
 
@@ -50,12 +44,4 @@ public class ZwitscherServiceApplicationTests {
     public void contextLoads() {
     }
 
-    @Test
-    public void testQuotesOnDesignFeignClient() {
-        RandomQuote quote = quoteClient.getRandomQuote().block();
-        assertThat(quote).isNotNull();
-
-        assertThat(quote.getQuote()).isNotNull();
-        assertThat(quote.getAuthor()).isNotNull();
-    }
 }

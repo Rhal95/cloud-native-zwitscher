@@ -2,18 +2,15 @@ package de.qaware.cloud.nativ.zwitscher.service.quote;
 
 import org.springframework.core.ResolvableType;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 
 //reactive client to access the Quotes on Design service
-@Component(value = "quotesOnDesign")
 public class QuotesOnDesignReactiveClient implements QuotesOnDesignClient {
 
     private WebClient quotesOnDesign = WebClient.create("http://quotesondesign.com");
-    ;
 
     public Mono<RandomQuote> getRandomQuote() {
         return quotesOnDesign

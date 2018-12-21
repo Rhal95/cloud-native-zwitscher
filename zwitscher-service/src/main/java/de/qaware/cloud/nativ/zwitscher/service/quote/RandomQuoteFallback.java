@@ -24,13 +24,11 @@
 package de.qaware.cloud.nativ.zwitscher.service.quote;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 /**
  * A fallback implementation for the QuotesOnDesignClient.
  */
-@Component
 @Slf4j
 public class RandomQuoteFallback implements QuotesOnDesignClient {
     @Override
