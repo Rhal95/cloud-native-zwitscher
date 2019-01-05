@@ -24,20 +24,9 @@
 package de.qaware.cloud.nativ.zwitscher.service.quote;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
-/**
- * A declarative Feign REST client to access the external Quotes on Design service.
- */
 @Controller
 public interface QuotesOnDesignClient {
-    /**
-     * Obtain a random quote by GET /api/3.0/api-3.0.json
-     *
-     * @return a random quote
-     */
-    @RequestMapping(method = RequestMethod.GET, value = "/api/3.0/api-3.0.json")
     RandomQuote getRandomQuote();
 }
 

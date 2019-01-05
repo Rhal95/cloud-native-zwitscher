@@ -24,7 +24,6 @@
 package de.qaware.cloud.nativ.zwitscher.service.quote;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,9 +40,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/quote")
 public class RandomQuoteController {
 
+    private final QuotesOnDesignClient quoteClient;
+
     @Autowired
-    @Qualifier("de.qaware.cloud.nativ.zwitscher.service.quote.QuotesOnDesignClient")
-    private QuotesOnDesignClient quoteClient;
+    public RandomQuoteController(QuotesOnDesignClient quoteClient) {
+        this.quoteClient = quoteClient;
+    }
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public HttpEntity<RandomQuote> quote() {
