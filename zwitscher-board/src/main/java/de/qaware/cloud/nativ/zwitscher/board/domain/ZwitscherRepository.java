@@ -26,10 +26,15 @@ package de.qaware.cloud.nativ.zwitscher.board.domain;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 /**
  * The ZwitscherRepository uses a load balanced RestTemplate to access the /tweets, the
@@ -41,6 +46,13 @@ public class ZwitscherRepository {
     @Value("${board.zwitscherUrl}")
     private String tweetsRibbonUrl;
 
+    private AsyncRabbitTemplate twitterTemplate;
+
+    @Autowired
+    public ZwitscherRepository(AsyncRabbitTemplate twitterTemplate) {
+        this.twitterTemplate = twitterTemplate;
+    }
+
     /**
      * Find the matching Zwitscher messages for the given query.
      *
@@ -50,11 +62,11 @@ public class ZwitscherRepository {
     @HystrixCommand(fallbackMethod = "none")
     public Flux<Zwitscher> findByQ(final @Length(max = 500) String q) {
         log.info("Get Zwitscher message from /tweets using q={}.", q);
-        return WebClient.create()
-                .get()
-                .uri(tweetsRibbonUrl, q)
-                .retrieve()
-                .bodyToFlux(Zwitscher.class);
+        AsyncRabbitTemplate.RabbitConverterFuture<List<Zwitscher>> converterFuture
+                = twitterTemplate.convertSendAndReceiveAsType(q, new ParameterizedTypeReference<List<Zwitscher>>() {
+        });
+        return Mono.fromFuture(converterFuture.completable())
+                .flatMapMany(Flux::fromIterable);
     }
 
     /**

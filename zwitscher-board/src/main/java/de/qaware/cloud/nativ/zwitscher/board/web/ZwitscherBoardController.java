@@ -27,13 +27,15 @@ import de.qaware.cloud.nativ.zwitscher.board.domain.QuoteRepository;
 import de.qaware.cloud.nativ.zwitscher.board.domain.ZwitscherRepository;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.thymeleaf.spring5.context.webflux.ReactiveDataDriverContextVariable;
+import reactor.core.publisher.Flux;
 
 /**
  * The main UI controller for the Zwitscher board interface.
@@ -53,7 +55,7 @@ public class ZwitscherBoardController {
     private String headline;
 
     @Autowired
-    public ZwitscherBoardController(@Qualifier("zwitscher-service") QuoteRepository quoteRepository, ZwitscherRepository zwitscherRepository) {
+    public ZwitscherBoardController(QuoteRepository quoteRepository, ZwitscherRepository zwitscherRepository) {
         this.quoteRepository = quoteRepository;
         this.zwitscherRepository = zwitscherRepository;
     }
@@ -64,7 +66,7 @@ public class ZwitscherBoardController {
      * @param viewModel the view model used to render the template
      * @return the template to use
      */
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @GetMapping(value = "/")
     public String index(Model viewModel) {
         populateDefault(viewModel);
         return "index";
@@ -88,12 +90,10 @@ public class ZwitscherBoardController {
     private void populateDefault(Model viewModel) {
         viewModel.addAttribute("title", title);
         viewModel.addAttribute("headline", headline);
-        quoteRepository.getNextQuote().subscribe(q -> viewModel.addAttribute("quote", q));
+        viewModel.addAttribute("quote", quoteRepository.getNextQuote());
     }
 
     private void populateTweets(String q, Model viewModel) {
-        zwitscherRepository
-                .findByQ(q)
-                .subscribe(tweets -> viewModel.addAttribute("tweets", tweets));
+        viewModel.addAttribute("tweets", new ReactiveDataDriverContextVariable(Flux.concat(zwitscherRepository.findByQ(q)), 1));
     }
 }

@@ -31,7 +31,6 @@ import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.netflix.ribbon.RibbonClient;
 import org.springframework.cloud.netflix.ribbon.RibbonClientHttpRequestFactory;
 import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
@@ -41,8 +40,7 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableCircuitBreaker
-@EnableFeignClients
-@RibbonClient(name = "zwitscher-service")
+@RibbonClient(name = "zwitscher-board")
 public class ZwitscherBoardApplication {
     public static void main(String[] args) {
         SpringApplication.run(ZwitscherBoardApplication.class, args);

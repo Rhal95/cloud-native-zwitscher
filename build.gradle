@@ -65,6 +65,8 @@ subprojects {
         testCompile('org.springframework.cloud:spring-cloud-contract-wiremock')
         testCompile('org.springframework.boot:spring-boot-test-autoconfigure')
         runtime("org.springframework.boot:spring-boot-properties-migrator")
+        implementation('org.springframework.boot:spring-boot-starter-amqp')
+        implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
     }
 
 

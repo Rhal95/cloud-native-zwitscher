@@ -23,23 +23,36 @@
  */
 package de.qaware.cloud.nativ.zwitscher.board.domain;
 
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
-/**
- * The feign client to access the /quote service from our zwitscher-service. Feign
- * will locate the endpoint via Eureka using the serviceId and use Ribbon to balance
- * between the registered instances.
- */
-@FeignClient(name = "zwitscher-service", fallback = Quote.Fallback.class)
-public interface QuoteRepository {
-    /**
-     * Get the next quote from the the /quote service.
-     *
-     * @return the quote
-     */
-    @RequestMapping(method = RequestMethod.GET, value = "/quote")
-    Mono<Quote> getNextQuote();
+@Repository
+@Slf4j
+public class QuoteRepository {
+
+    private AsyncRabbitTemplate quoteTemplate;
+
+    @Autowired
+    public QuoteRepository(AsyncRabbitTemplate quoteTemplate) {
+        this.quoteTemplate = quoteTemplate;
+    }
+
+    @HystrixCommand(fallbackMethod = "fallback")
+    public Mono<Quote> getNextQuote() {
+        log.info("Sending msg \"quote\" to queue");
+        return Mono.fromFuture(quoteTemplate.
+                convertSendAndReceiveAsType("quote", new ParameterizedTypeReference<Quote>() {
+                })
+                .completable());
+    }
+
+    protected Mono<Quote> fallback() {
+        log.warn("using fallback quote");
+        return Mono.just(new Quote("quote", "author"));
+    }
 }

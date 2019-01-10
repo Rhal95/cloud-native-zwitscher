@@ -26,9 +26,6 @@ package de.qaware.cloud.nativ.zwitscher.board.domain;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-import reactor.core.publisher.Mono;
 
 /**
  * A simple quote data class. Also defines the fallback implementation.
@@ -41,13 +38,4 @@ public class Quote {
     private String quote;
     private String author;
 
-    @Component
-    @Slf4j
-    static class Fallback implements QuoteRepository {
-        @Override
-        public Mono<Quote> getNextQuote() {
-            log.warn("Using fallback Quote");
-            return Mono.just(new Quote("Everything fails all the time.", "Unknown"));
-        }
-    }
 }
