@@ -29,6 +29,7 @@ import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.concurrent.ListenableFutureCallback;
 import reactor.core.publisher.Mono;
 
 @Repository
@@ -44,11 +45,25 @@ public class QuoteRepository {
 
     @HystrixCommand(fallbackMethod = "fallback")
     public Mono<Quote> getNextQuote() {
-        log.info("Sending msg \"quote\" to queue");
-        return Mono.fromFuture(quoteTemplate.
-                convertSendAndReceiveAsType("quote", new ParameterizedTypeReference<Quote>() {
-                })
-                .completable());
+
+        AsyncRabbitTemplate.RabbitConverterFuture<Quote> quote = quoteTemplate
+                .convertSendAndReceiveAsType("app.zwitscher", "", "quote", new ParameterizedTypeReference<Quote>() {
+                });
+        log.info("send request for quote");
+        quote.addCallback(new ListenableFutureCallback<Quote>() {
+            @Override
+            public void onFailure(Throwable ex) {
+                log.error("resp failed", ex);
+            }
+
+            @Override
+            public void onSuccess(Quote result) {
+                log.info("resp received: " + result);
+            }
+        });
+        return Mono.fromFuture(quote
+                .completable())
+                .doOnError((e) -> log.error("error occured with reply for queue", e));
     }
 
     protected Mono<Quote> fallback() {

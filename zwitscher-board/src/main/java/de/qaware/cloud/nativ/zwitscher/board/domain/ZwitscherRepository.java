@@ -63,7 +63,7 @@ public class ZwitscherRepository {
     public Flux<Zwitscher> findByQ(final @Length(max = 500) String q) {
         log.info("Get Zwitscher message from /tweets using q={}.", q);
         AsyncRabbitTemplate.RabbitConverterFuture<List<Zwitscher>> converterFuture
-                = twitterTemplate.convertSendAndReceiveAsType(q, new ParameterizedTypeReference<List<Zwitscher>>() {
+                = twitterTemplate.convertSendAndReceiveAsType("zwitscher", q, new ParameterizedTypeReference<List<Zwitscher>>() {
         });
         return Mono.fromFuture(converterFuture.completable())
                 .flatMapMany(Flux::fromIterable);
