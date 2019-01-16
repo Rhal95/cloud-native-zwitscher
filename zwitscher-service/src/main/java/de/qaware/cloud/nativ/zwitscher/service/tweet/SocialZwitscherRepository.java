@@ -29,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.context.annotation.Profile;
 import org.springframework.social.twitter.api.Twitter;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
@@ -40,6 +41,7 @@ import reactor.core.publisher.Flux;
 @Repository
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Profile("native")
 public class SocialZwitscherRepository implements ZwitscherRepository, HealthIndicator {
 
     private final Twitter twitter;

@@ -25,9 +25,11 @@ package de.qaware.cloud.nativ.zwitscher.board.domain;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 import reactor.core.publisher.Mono;
@@ -39,6 +41,9 @@ public class QuoteRepository {
     private AsyncRabbitTemplate quoteTemplate;
 
     @Autowired
+    private Exchange exchange;
+
+    @Autowired
     public QuoteRepository(AsyncRabbitTemplate quoteTemplate) {
         this.quoteTemplate = quoteTemplate;
     }
@@ -47,18 +52,18 @@ public class QuoteRepository {
     public Mono<Quote> getNextQuote() {
 
         AsyncRabbitTemplate.RabbitConverterFuture<Quote> quote = quoteTemplate
-                .convertSendAndReceiveAsType("app.zwitscher", "", "quote", new ParameterizedTypeReference<Quote>() {
+                .convertSendAndReceiveAsType(exchange.getName(), "request", "quote", new ParameterizedTypeReference<Quote>() {
                 });
         log.info("send request for quote");
         quote.addCallback(new ListenableFutureCallback<Quote>() {
             @Override
-            public void onFailure(Throwable ex) {
+            public void onFailure(@NonNull Throwable ex) {
                 log.error("resp failed", ex);
             }
 
             @Override
-            public void onSuccess(Quote result) {
-                log.info("resp received: " + result);
+            public void onSuccess(@NonNull Quote result) {
+                log.info("resp received: " + result.toString());
             }
         });
         return Mono.fromFuture(quote

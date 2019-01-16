@@ -26,6 +26,7 @@ package de.qaware.cloud.nativ.zwitscher.board.domain;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,6 +50,10 @@ public class ZwitscherRepository {
     private AsyncRabbitTemplate twitterTemplate;
 
     @Autowired
+    private Exchange exchange;
+
+
+    @Autowired
     public ZwitscherRepository(AsyncRabbitTemplate twitterTemplate) {
         this.twitterTemplate = twitterTemplate;
     }
@@ -63,7 +68,7 @@ public class ZwitscherRepository {
     public Flux<Zwitscher> findByQ(final @Length(max = 500) String q) {
         log.info("Get Zwitscher message from /tweets using q={}.", q);
         AsyncRabbitTemplate.RabbitConverterFuture<List<Zwitscher>> converterFuture
-                = twitterTemplate.convertSendAndReceiveAsType("zwitscher", q, new ParameterizedTypeReference<List<Zwitscher>>() {
+                = twitterTemplate.convertSendAndReceiveAsType(exchange.getName(), "request", new SearchParameter(q, 50), new ParameterizedTypeReference<List<Zwitscher>>() {
         });
         return Mono.fromFuture(converterFuture.completable())
                 .flatMapMany(Flux::fromIterable);

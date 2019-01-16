@@ -14,34 +14,25 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @Slf4j
 public class RabbitMQConfiguration {
-    private Queue replyQueue = QueueBuilder.durable("app.zwitscher.reply").build();
-    private Queue requestQueue = QueueBuilder.durable("app.zwitscher.request").build();
+    //anonymous queue
+    private Queue replyQueue = QueueBuilder.nonDurable().build();
 
     @Autowired
     ConnectionFactory connectionFactory;
-
-
-    @Bean
-    public Queue getReplyQueue() {
-        return replyQueue;
-    }
-
-    @Bean
-    public Queue getRequestQueue() {
-        return requestQueue;
-    }
 
     @Bean
     public DirectExchange exchange() {
         return new DirectExchange("app.zwitscher");
     }
 
+    @Bean
+    public Binding replyBinding(DirectExchange exchange) {
+        return BindingBuilder.bind(replyQueue).to(exchange).with("reply");
+    }
 
     @Bean
-    Binding binding(DirectExchange exchange) {
-        return BindingBuilder.bind(requestQueue)
-                .to(exchange)
-                .with("zwitscher");
+    public Queue replyQueue() {
+        return replyQueue;
     }
 
     @Bean
@@ -50,13 +41,12 @@ public class RabbitMQConfiguration {
     }
 
     @Bean
-    public AsyncRabbitTemplate asyncRabbitTemplate(RabbitTemplate template) {
-        log.info("port is: " + connectionFactory.getPort());
+    public AsyncRabbitTemplate asyncRabbitTemplate(RabbitTemplate template, Jackson2JsonMessageConverter messageConverter) {
         SimpleMessageListenerContainer listenerContainer = new SimpleMessageListenerContainer(connectionFactory);
         listenerContainer.setQueueNames(replyQueue.getName());
+        template.setMessageConverter(messageConverter);
         return new AsyncRabbitTemplate(template, listenerContainer);
     }
-
 
 
 }
