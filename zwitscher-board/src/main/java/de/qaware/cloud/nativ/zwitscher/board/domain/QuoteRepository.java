@@ -24,14 +24,12 @@
 package de.qaware.cloud.nativ.zwitscher.board.domain;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import de.qaware.cloud.nativ.zwitscher.common.transfer.QuoteRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.concurrent.ListenableFutureCallback;
 import reactor.core.publisher.Mono;
 
 @Repository
@@ -41,34 +39,18 @@ public class QuoteRepository {
     private AsyncRabbitTemplate quoteTemplate;
 
     @Autowired
-    private Exchange exchange;
-
-    @Autowired
     public QuoteRepository(AsyncRabbitTemplate quoteTemplate) {
         this.quoteTemplate = quoteTemplate;
     }
 
-    @HystrixCommand(fallbackMethod = "fallback")
+    @HystrixCommand(fallbackMethod = "fallback", ignoreExceptions = Exception.class)
     public Mono<Quote> getNextQuote() {
-
-        AsyncRabbitTemplate.RabbitConverterFuture<Quote> quote = quoteTemplate
-                .convertSendAndReceiveAsType(exchange.getName(), "request", "quote", new ParameterizedTypeReference<Quote>() {
-                });
         log.info("send request for quote");
-        quote.addCallback(new ListenableFutureCallback<Quote>() {
-            @Override
-            public void onFailure(@NonNull Throwable ex) {
-                log.error("resp failed", ex);
-            }
-
-            @Override
-            public void onSuccess(@NonNull Quote result) {
-                log.info("resp received: " + result.toString());
-            }
-        });
-        return Mono.fromFuture(quote
-                .completable())
-                .doOnError((e) -> log.error("error occured with reply for queue", e));
+        AsyncRabbitTemplate.RabbitConverterFuture<Quote> request = quoteTemplate
+                .convertSendAndReceiveAsType("app.zwitscher", "request", new QuoteRequest(), new ParameterizedTypeReference<Quote>() {
+                });
+        request.addCallback(s -> log.info("success quote"), e -> log.error("error while receiving quote", e));
+        return Mono.fromFuture(request.completable());
     }
 
     protected Mono<Quote> fallback() {

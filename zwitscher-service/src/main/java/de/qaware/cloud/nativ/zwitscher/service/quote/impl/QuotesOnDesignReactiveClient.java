@@ -1,7 +1,10 @@
-package de.qaware.cloud.nativ.zwitscher.service.quote;
+package de.qaware.cloud.nativ.zwitscher.service.quote.impl;
 
+import de.qaware.cloud.nativ.zwitscher.service.quote.QuotesOnDesignClient;
+import de.qaware.cloud.nativ.zwitscher.service.quote.RandomQuote;
 import org.springframework.core.ResolvableType;
 import org.springframework.http.MediaType;
+import org.springframework.messaging.converter.MessageConversionException;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -22,7 +25,7 @@ public class QuotesOnDesignReactiveClient implements QuotesOnDesignClient {
                         context.messageReaders()
                                 .stream()
                                 .filter(f -> f.canRead(ResolvableType.forClass(RandomQuote.class), MediaType.APPLICATION_JSON)) //find a Reader that understands json and can decode a RandomQuote
-                                .findFirst().get()
+                                .findFirst().orElseThrow(() -> new MessageConversionException("No message reader found for reading RandomQuote as JSON."))
                                 .readMono(ResolvableType.forClass(RandomQuote.class), inputMessage, new HashMap<>())
                                 .map(e -> (RandomQuote) e) // we just read a RandomQuote so the type is actually fixed here.
                 ));

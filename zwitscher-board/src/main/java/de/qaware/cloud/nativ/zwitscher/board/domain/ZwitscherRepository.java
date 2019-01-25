@@ -24,9 +24,9 @@
 package de.qaware.cloud.nativ.zwitscher.board.domain;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import de.qaware.cloud.nativ.zwitscher.common.transfer.ZwitscherRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,9 +49,6 @@ public class ZwitscherRepository {
 
     private AsyncRabbitTemplate twitterTemplate;
 
-    @Autowired
-    private Exchange exchange;
-
 
     @Autowired
     public ZwitscherRepository(AsyncRabbitTemplate twitterTemplate) {
@@ -67,11 +64,11 @@ public class ZwitscherRepository {
     @HystrixCommand(fallbackMethod = "none")
     public Flux<Zwitscher> findByQ(final @Length(max = 500) String q) {
         log.info("Get Zwitscher message from /tweets using q={}.", q);
-        AsyncRabbitTemplate.RabbitConverterFuture<List<Zwitscher>> converterFuture
-                = twitterTemplate.convertSendAndReceiveAsType(exchange.getName(), "request", new SearchParameter(q, 50), new ParameterizedTypeReference<List<Zwitscher>>() {
-        });
-        return Mono.fromFuture(converterFuture.completable())
-                .flatMapMany(Flux::fromIterable);
+        AsyncRabbitTemplate.RabbitConverterFuture<List<Zwitscher>> request = twitterTemplate
+                .convertSendAndReceiveAsType("app.zwitscher", "request", new ZwitscherRequest(q, 50), new ParameterizedTypeReference<List<Zwitscher>>() {
+                });
+
+        return Mono.fromFuture(request.completable()).flatMapMany(Flux::fromIterable);
     }
 
     /**
@@ -82,6 +79,6 @@ public class ZwitscherRepository {
      */
     protected Flux<Zwitscher> none(final String q) {
         log.warn("Using fallback for Zwitscher messages.");
-        return Flux.empty();
+        return Flux.just(new Zwitscher("fallback entry"));
     }
 }

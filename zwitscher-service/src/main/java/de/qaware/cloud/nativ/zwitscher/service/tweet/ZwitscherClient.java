@@ -28,7 +28,7 @@ import reactor.core.publisher.Flux;
 /**
  * The ZwitscherRepository provides methods to work with ZwitscherMessages.
  */
-public interface ZwitscherRepository {
+public interface ZwitscherClient {
     /**
      * Find and return all ZwitscherMessages matching the given query.
      *

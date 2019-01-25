@@ -21,9 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.qaware.cloud.nativ.zwitscher.service.tweet;
+package de.qaware.cloud.nativ.zwitscher.service.tweet.impl;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import de.qaware.cloud.nativ.zwitscher.service.tweet.ZwitscherClient;
+import de.qaware.cloud.nativ.zwitscher.service.tweet.ZwitscherMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,15 +44,14 @@ import reactor.core.publisher.Flux;
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Profile("native")
-public class SocialZwitscherRepository implements ZwitscherRepository, HealthIndicator {
+public class SocialZwitscherClient implements ZwitscherClient, HealthIndicator {
 
     private final Twitter twitter;
 
     @Override
     @HystrixCommand(fallbackMethod = "noResults")
     public Flux<ZwitscherMessage> search(String q, int pageSize) {
-        //check if this breaks out of the reactive environment
-        //if this is 'bad' we may have to supply an own twitter api implementation
+        //todo change the twitter implementation to use an reactive wrapper
         return Flux.fromIterable(twitter.searchOperations().search(q, pageSize).getTweets())
                 .map(t -> new ZwitscherMessage(t.getUnmodifiedText()));
     }

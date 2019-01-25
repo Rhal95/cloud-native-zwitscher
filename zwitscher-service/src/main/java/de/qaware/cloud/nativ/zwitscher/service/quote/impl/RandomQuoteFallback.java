@@ -21,34 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.qaware.cloud.nativ.zwitscher.service.quote;
+package de.qaware.cloud.nativ.zwitscher.service.quote.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import de.qaware.cloud.nativ.zwitscher.service.quote.QuotesOnDesignClient;
+import de.qaware.cloud.nativ.zwitscher.service.quote.RandomQuote;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 /**
- * A REST controller to produce random quotes. The client used here is a feign client
- * that goes against a public quote API service.
+ * A fallback implementation for the QuotesOnDesignClient.
  */
-@Controller
-@RequestMapping("/quote")
-public class RandomQuoteController {
-
-    private QuotesOnDesignClient quoteClient;
-
-    @Autowired
-    public RandomQuoteController(QuotesOnDesignClient quoteClient) {
-        this.quoteClient = quoteClient;
-    }
-
-    @GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    @ResponseBody
-    public Mono<RandomQuote> quote() {
-        return quoteClient.getRandomQuote();
+@Slf4j
+public class RandomQuoteFallback implements QuotesOnDesignClient {
+    @Override
+    public Mono<RandomQuote> getRandomQuote() {
+        log.warn("Using fallback for RandomQuote.");
+        return Mono.just(new RandomQuote("Everything fails all the time.", "Unknown"));
     }
 }

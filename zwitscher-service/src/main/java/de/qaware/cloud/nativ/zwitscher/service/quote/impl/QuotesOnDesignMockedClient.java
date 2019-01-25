@@ -1,5 +1,7 @@
-package de.qaware.cloud.nativ.zwitscher.service.quote;
+package de.qaware.cloud.nativ.zwitscher.service.quote.impl;
 
+import de.qaware.cloud.nativ.zwitscher.service.quote.QuotesOnDesignClient;
+import de.qaware.cloud.nativ.zwitscher.service.quote.RandomQuote;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;

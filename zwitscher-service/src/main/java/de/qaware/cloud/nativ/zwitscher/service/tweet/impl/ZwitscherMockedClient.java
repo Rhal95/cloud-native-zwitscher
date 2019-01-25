@@ -1,16 +1,18 @@
-package de.qaware.cloud.nativ.zwitscher.service.tweet;
+package de.qaware.cloud.nativ.zwitscher.service.tweet.impl;
 
+import de.qaware.cloud.nativ.zwitscher.service.tweet.ZwitscherClient;
+import de.qaware.cloud.nativ.zwitscher.service.tweet.ZwitscherMessage;
 import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.util.Random;
 
-@Repository
+@Component
 @Profile("test")
-public class ZwitscherMockedRepository implements ZwitscherRepository {
+public class ZwitscherMockedClient implements ZwitscherClient {
     private int minDelay = 1; //ms
     private int maxDelay = 5; //ms
 
@@ -22,7 +24,7 @@ public class ZwitscherMockedRepository implements ZwitscherRepository {
 
     @Override
     public Flux<ZwitscherMessage> search(String q, int pageSize) {
-        return Flux.range(1, pageSize + 1)
-                .flatMap(i -> Mono.just(new ZwitscherMessage("msg with number " + i))).delayElements(getRandomDuration());
+        return Flux.range(1, pageSize)
+                .flatMap(i -> Mono.just(new ZwitscherMessage("Searched for: " + q + "\tnr: " + i))).delayElements(getRandomDuration());
     }
 }

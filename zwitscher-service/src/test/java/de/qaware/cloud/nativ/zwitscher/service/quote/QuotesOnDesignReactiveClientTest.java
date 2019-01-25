@@ -1,9 +1,9 @@
 package de.qaware.cloud.nativ.zwitscher.service.quote;
 
 import de.qaware.cloud.nativ.zwitscher.service.ZwitscherServiceApplication;
+import de.qaware.cloud.nativ.zwitscher.service.quote.impl.QuotesOnDesignReactiveClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.context.ActiveProfiles;
@@ -19,9 +19,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles({"test", "native"})
 public class QuotesOnDesignReactiveClientTest {
 
+    private QuotesOnDesignReactiveClient client;
 
-    @Autowired
-    QuotesOnDesignReactiveClient client;
+    public QuotesOnDesignReactiveClientTest() {
+        this.client = new QuotesOnDesignReactiveClient();
+    }
 
 
     @Test

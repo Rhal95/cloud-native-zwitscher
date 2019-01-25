@@ -1,5 +1,9 @@
-package de.qaware.cloud.nativ.zwitscher.service.quote;
+package de.qaware.cloud.nativ.zwitscher.service.config;
 
+import de.qaware.cloud.nativ.zwitscher.service.quote.QuotesOnDesignClient;
+import de.qaware.cloud.nativ.zwitscher.service.quote.impl.QuotesOnDesignMockedClient;
+import de.qaware.cloud.nativ.zwitscher.service.quote.impl.QuotesOnDesignReactiveClient;
+import de.qaware.cloud.nativ.zwitscher.service.quote.impl.RandomQuoteFallback;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

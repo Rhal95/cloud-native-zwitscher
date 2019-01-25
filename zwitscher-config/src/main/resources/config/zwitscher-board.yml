@@ -3,12 +3,10 @@ board:
   headline: Random Quote on Design
   zwitscherUrl: http://zwitscher-service/tweets?q={q}
 
-
-
 logging:
   level:
-    com.netflix.discovery: INFO
-    org.springframework.cloud: INFO
+    com.netflix.discovery: DEBUG
+    org.springframework.cloud: DEBUG
     org.springframework.web: DEBUG
     de.qaware.cloud.nativ.zwitscher: DEBUG
 
