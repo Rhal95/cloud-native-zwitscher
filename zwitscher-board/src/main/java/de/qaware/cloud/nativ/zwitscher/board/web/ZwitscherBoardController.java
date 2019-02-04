@@ -23,8 +23,8 @@
  */
 package de.qaware.cloud.nativ.zwitscher.board.web;
 
-import de.qaware.cloud.nativ.zwitscher.board.domain.QuoteRepository;
-import de.qaware.cloud.nativ.zwitscher.board.domain.ZwitscherRepository;
+import de.qaware.cloud.nativ.zwitscher.board.domain.QuoteClient;
+import de.qaware.cloud.nativ.zwitscher.board.domain.ZwitscherClient;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,10 +43,10 @@ import reactor.core.publisher.Flux;
 @Controller
 public class ZwitscherBoardController {
 
-    private QuoteRepository quoteRepository;
+    private QuoteClient quoteClient;
 
 
-    private ZwitscherRepository zwitscherRepository;
+    private ZwitscherClient zwitscherClient;
 
     @Value("${board.title}")
     private String title;
@@ -55,9 +55,9 @@ public class ZwitscherBoardController {
     private String headline;
 
     @Autowired
-    public ZwitscherBoardController(QuoteRepository quoteRepository, ZwitscherRepository zwitscherRepository) {
-        this.quoteRepository = quoteRepository;
-        this.zwitscherRepository = zwitscherRepository;
+    public ZwitscherBoardController(QuoteClient quoteClient, ZwitscherClient zwitscherClient) {
+        this.quoteClient = quoteClient;
+        this.zwitscherClient = zwitscherClient;
     }
 
     /**
@@ -90,10 +90,10 @@ public class ZwitscherBoardController {
     private void populateDefault(Model viewModel) {
         viewModel.addAttribute("title", title);
         viewModel.addAttribute("headline", headline);
-        viewModel.addAttribute("quote", quoteRepository.getNextQuote());
+        viewModel.addAttribute("quote", quoteClient.getNextQuote());
     }
 
     private void populateTweets(String q, Model viewModel) {
-        viewModel.addAttribute("tweets", new ReactiveDataDriverContextVariable(Flux.concat(zwitscherRepository.findByQ(q)), 1));
+        viewModel.addAttribute("tweets", new ReactiveDataDriverContextVariable(Flux.concat(zwitscherClient.findByQ(q)), 1));
     }
 }

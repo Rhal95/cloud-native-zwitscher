@@ -43,16 +43,16 @@ import java.util.List;
  */
 @Repository
 @Slf4j
-public class ZwitscherRepository {
+public class ZwitscherClient {
     @Value("${board.zwitscherUrl}")
     private String tweetsRibbonUrl;
 
-    private AsyncRabbitTemplate twitterTemplate;
+    private AsyncRabbitTemplate rabbitTemplate;
 
 
     @Autowired
-    public ZwitscherRepository(AsyncRabbitTemplate twitterTemplate) {
-        this.twitterTemplate = twitterTemplate;
+    public ZwitscherClient(AsyncRabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     /**
@@ -64,7 +64,7 @@ public class ZwitscherRepository {
     @HystrixCommand(fallbackMethod = "none")
     public Flux<Zwitscher> findByQ(final @Length(max = 500) String q) {
         log.info("Get Zwitscher message from /tweets using q={}.", q);
-        AsyncRabbitTemplate.RabbitConverterFuture<List<Zwitscher>> request = twitterTemplate
+        AsyncRabbitTemplate.RabbitConverterFuture<List<Zwitscher>> request = rabbitTemplate
                 .convertSendAndReceiveAsType("app.zwitscher", "request", new ZwitscherRequest(q, 50), new ParameterizedTypeReference<List<Zwitscher>>() {
                 });
 

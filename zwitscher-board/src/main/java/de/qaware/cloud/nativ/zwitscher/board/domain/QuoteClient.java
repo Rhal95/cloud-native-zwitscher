@@ -34,19 +34,19 @@ import reactor.core.publisher.Mono;
 
 @Repository
 @Slf4j
-public class QuoteRepository {
+public class QuoteClient {
 
-    private AsyncRabbitTemplate quoteTemplate;
+    private AsyncRabbitTemplate rabbitTemplate;
 
     @Autowired
-    public QuoteRepository(AsyncRabbitTemplate quoteTemplate) {
-        this.quoteTemplate = quoteTemplate;
+    public QuoteClient(AsyncRabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @HystrixCommand(fallbackMethod = "fallback", ignoreExceptions = Exception.class)
     public Mono<Quote> getNextQuote() {
         log.info("send request for quote");
-        AsyncRabbitTemplate.RabbitConverterFuture<Quote> request = quoteTemplate
+        AsyncRabbitTemplate.RabbitConverterFuture<Quote> request = rabbitTemplate
                 .convertSendAndReceiveAsType("app.zwitscher", "request", new QuoteRequest(), new ParameterizedTypeReference<Quote>() {
                 });
         request.addCallback(s -> log.info("success quote"), e -> log.error("error while receiving quote", e));
