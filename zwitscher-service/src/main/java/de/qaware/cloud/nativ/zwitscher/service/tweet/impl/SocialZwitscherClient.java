@@ -40,10 +40,8 @@ import reactor.core.publisher.Flux;
  * This implementation uses Spring Social Twitter API to access tweets
  * from twitter in order to map them to ZwitscherMessages.
  */
-@Repository
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@Profile("native")
 public class SocialZwitscherClient implements ZwitscherClient, HealthIndicator {
 
     private final Twitter twitter;

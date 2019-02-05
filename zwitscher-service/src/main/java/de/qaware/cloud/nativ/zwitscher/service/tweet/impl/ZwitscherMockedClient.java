@@ -10,8 +10,6 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 import java.util.Random;
 
-@Component
-@Profile("test")
 public class ZwitscherMockedClient implements ZwitscherClient {
     private int minDelay = 1; //ms
     private int maxDelay = 5; //ms

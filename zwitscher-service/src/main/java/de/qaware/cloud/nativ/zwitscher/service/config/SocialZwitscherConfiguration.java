@@ -23,11 +23,15 @@
  */
 package de.qaware.cloud.nativ.zwitscher.service.config;
 
+import de.qaware.cloud.nativ.zwitscher.service.tweet.ZwitscherClient;
+import de.qaware.cloud.nativ.zwitscher.service.tweet.impl.SocialZwitscherClient;
+import de.qaware.cloud.nativ.zwitscher.service.tweet.impl.ZwitscherMockedClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.social.twitter.api.Twitter;
 import org.springframework.social.twitter.api.impl.TwitterTemplate;
 
@@ -35,12 +39,24 @@ import org.springframework.social.twitter.api.impl.TwitterTemplate;
  * A custom configuration to initialize the Twitter template.
  */
 @Configuration
-@ConditionalOnProperty(value = {"spring.social.twitter.appId", "spring.social.twitter.appSecret"})
 public class SocialZwitscherConfiguration {
-    @ConditionalOnMissingBean
+    @Profile("native")
+    @ConditionalOnProperty(value = {"spring.social.twitter.appId", "spring.social.twitter.appSecret"})
     @Bean
     public Twitter twitter(final @Value("${spring.social.twitter.appId}") String appId,
                            final @Value("${spring.social.twitter.appSecret}") String appSecret) {
         return new TwitterTemplate(appId, appSecret);
+    }
+
+    @Profile("native")
+    @Bean
+    public ZwitscherClient twitterClient(Twitter twitter){
+        return new SocialZwitscherClient(twitter);
+    }
+
+    @ConditionalOnMissingBean
+    @Bean
+    public ZwitscherClient mocked(){
+        return new ZwitscherMockedClient();
     }
 }
