@@ -23,9 +23,6 @@
  */
 package de.qaware.cloud.nativ.zwitscher.service.quote;
 
-import org.springframework.stereotype.Controller;
-
-@Controller
 public interface QuotesOnDesignClient {
     RandomQuote getRandomQuote();
 }

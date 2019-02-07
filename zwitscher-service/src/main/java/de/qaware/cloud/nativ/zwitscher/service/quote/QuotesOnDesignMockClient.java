@@ -1,15 +1,19 @@
 package de.qaware.cloud.nativ.zwitscher.service.quote;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 import java.util.Random;
 
 @Slf4j
+@Component
+@Profile("test")
 public class QuotesOnDesignMockClient implements QuotesOnDesignClient {
-    int minDelay = 20;
-    int maxDelay = 500;
+    private int minDelay = 20;
+    private int maxDelay = 500;
 
-    Random random = new Random();
+    private Random random = new Random();
 
     @Override
     public RandomQuote getRandomQuote() {

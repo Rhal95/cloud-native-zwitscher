@@ -27,6 +27,7 @@ import feign.codec.Decoder;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.cloud.openfeign.support.ResponseEntityDecoder;
 import org.springframework.cloud.openfeign.support.SpringDecoder;
 import org.springframework.context.annotation.Bean;
@@ -40,8 +41,11 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 /**
  * Custom configuration component required for the QuotesOnDesign feign client.
  */
+
+@EnableFeignClients
 @Configuration
-public class QuotesOnDesignConfiguration {
+@Profile("native")
+public class QuotesOnDesignFeignConfiguration {
     @Bean
     public Decoder feignDecoder() {
         HttpMessageConverter jacksonConverter = new QuoteOnDesignMessageConverter();
@@ -60,18 +64,4 @@ public class QuotesOnDesignConfiguration {
         }
     }
 
-
-    @Bean
-    @ConditionalOnMissingBean
-    @Profile("zwitscher")
-    QuotesOnDesignClient fallback() {
-        return new RandomQuoteFallback();
-    }
-
-    @Bean
-    @Profile("test")
-    @ConditionalOnMissingBean
-    QuotesOnDesignClient mocked() {
-        return new QuotesOnDesignMockClient();
-    }
 }

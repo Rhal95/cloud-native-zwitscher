@@ -42,7 +42,6 @@ import static java.util.stream.Collectors.toList;
  * This implementation uses Spring Social Twitter API to access tweets
  * from twitter in order to map them to ZwitscherMessages.
  */
-@Repository
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class SocialZwitscherRepository implements ZwitscherRepository, HealthIndicator {
