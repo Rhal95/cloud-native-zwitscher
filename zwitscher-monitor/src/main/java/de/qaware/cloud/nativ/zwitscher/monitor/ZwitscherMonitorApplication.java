@@ -39,7 +39,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableTurbine
-@EnableHystrixDashboard
 @Controller
 public class ZwitscherMonitorApplication {
 

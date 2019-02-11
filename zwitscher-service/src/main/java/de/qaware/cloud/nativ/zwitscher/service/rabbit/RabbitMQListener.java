@@ -6,8 +6,7 @@ import de.qaware.cloud.nativ.zwitscher.service.quote.QuotesOnDesignController;
 import de.qaware.cloud.nativ.zwitscher.service.quote.RandomQuote;
 import de.qaware.cloud.nativ.zwitscher.service.tweet.ZwitscherController;
 import de.qaware.cloud.nativ.zwitscher.service.tweet.ZwitscherMessage;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-@Slf4j
 @RabbitListener(queues = "#{requestQueue.name}", containerFactory = "MyRabbitListenerContainerFactory")
 @Component
 public class RabbitMQListener {

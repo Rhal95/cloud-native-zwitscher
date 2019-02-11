@@ -13,7 +13,9 @@ dependencies {
     compile('org.springframework.social:spring-social-twitter:2.0.0.M4'){
         exclude group: 'org.springframework', module: 'spring-webmvc'
     }
+    implementation('org.springframework.boot:spring-boot-starter-webflux')
     compile 'org.springframework.cloud:spring-cloud-starter-netflix-hystrix'
     compile 'org.springframework.boot:spring-boot-starter-actuator'
-    compile project(':zwitscher-common')
+    implementation project(':zwitscher-common')
+    compile 'org.springframework.boot:spring-boot-starter-amqp'
 }

@@ -25,13 +25,12 @@ package de.qaware.cloud.nativ.zwitscher.board.domain;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import de.qaware.cloud.nativ.zwitscher.common.transfer.ZwitscherRequest;
-import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -41,8 +40,7 @@ import java.util.List;
  * The ZwitscherRepository uses a load balanced RestTemplate to access the /tweets, the
  * actual invocation is wrapped into a Hystrix command.
  */
-@Repository
-@Slf4j
+@Component
 public class ZwitscherClient {
     @Value("${board.zwitscherUrl}")
     private String tweetsRibbonUrl;
@@ -63,7 +61,6 @@ public class ZwitscherClient {
      */
     @HystrixCommand(fallbackMethod = "none")
     public Flux<Zwitscher> findByQ(final @Length(max = 500) String q) {
-        log.info("Get Zwitscher message from /tweets using q={}.", q);
         AsyncRabbitTemplate.RabbitConverterFuture<List<Zwitscher>> request = rabbitTemplate
                 .convertSendAndReceiveAsType("app.zwitscher", "request", new ZwitscherRequest(q, 50), new ParameterizedTypeReference<List<Zwitscher>>() {
                 });
@@ -78,7 +75,6 @@ public class ZwitscherClient {
      * @return empty collection
      */
     protected Flux<Zwitscher> none(final String q) {
-        log.warn("Using fallback for Zwitscher messages.");
         return Flux.just(new Zwitscher("fallback entry"));
     }
 }

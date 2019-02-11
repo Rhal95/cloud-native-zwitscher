@@ -33,6 +33,7 @@ import org.springframework.cloud.netflix.ribbon.RibbonClientHttpRequestFactory;
 import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
+import org.thymeleaf.spring5.context.webflux.SpringWebFluxThymeleafRequestContext;
 
 /**
  * The Zwitscher board UI main application of the Cloud Native Zwitscher Showcase.

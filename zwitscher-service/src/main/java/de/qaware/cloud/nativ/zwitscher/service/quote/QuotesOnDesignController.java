@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-@Slf4j
 @Component
 public class QuotesOnDesignController {
     private QuotesOnDesignClient quotesClient;
@@ -17,7 +16,6 @@ public class QuotesOnDesignController {
     }
 
     public Mono<RandomQuote> getQuote() {
-        log.debug("HandleQuote");
         return quotesClient.getRandomQuote();
     }
 }

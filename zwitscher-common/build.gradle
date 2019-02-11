@@ -2,3 +2,6 @@ jar {
     baseName = 'zwitscher-common'
     version = "$version"
 }
+dependencies{
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+}

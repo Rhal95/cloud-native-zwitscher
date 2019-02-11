@@ -25,15 +25,13 @@ package de.qaware.cloud.nativ.zwitscher.board.domain;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import de.qaware.cloud.nativ.zwitscher.common.transfer.QuoteRequest;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-@Repository
-@Slf4j
+@Component
 public class QuoteClient {
 
     private AsyncRabbitTemplate rabbitTemplate;
@@ -45,16 +43,13 @@ public class QuoteClient {
 
     @HystrixCommand(fallbackMethod = "fallback", ignoreExceptions = Exception.class)
     public Mono<Quote> getNextQuote() {
-        log.info("send request for quote");
         AsyncRabbitTemplate.RabbitConverterFuture<Quote> request = rabbitTemplate
                 .convertSendAndReceiveAsType("app.zwitscher", "request", new QuoteRequest(), new ParameterizedTypeReference<Quote>() {
                 });
-        request.addCallback(s -> log.info("success quote"), e -> log.error("error while receiving quote", e));
         return Mono.fromFuture(request.completable());
     }
 
     protected Mono<Quote> fallback() {
-        log.warn("using fallback quote");
         return Mono.just(new Quote("quote", "author"));
     }
 }

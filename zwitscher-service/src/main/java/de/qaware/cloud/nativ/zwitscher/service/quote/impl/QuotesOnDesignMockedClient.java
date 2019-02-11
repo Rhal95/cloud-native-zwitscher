@@ -9,7 +9,7 @@ import java.util.Random;
 
 public class QuotesOnDesignMockedClient implements QuotesOnDesignClient {
     private int minDelay = 20; //ms
-    private int maxDelay = 500; //ms
+    private int maxDelay = 80; //ms
 
     private Random random = new Random();
 

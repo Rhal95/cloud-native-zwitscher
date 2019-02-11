@@ -9,7 +9,7 @@ import java.time.Duration;
 import java.util.stream.Stream;
 
 public class ZwitscherMockedClient implements ZwitscherClient {
-    private Duration duration = Duration.ofMillis(200);
+    private Duration duration = Duration.ofMillis(100);
 
     @Override
     public Flux<ZwitscherMessage> search(String q, int pageSize) {
