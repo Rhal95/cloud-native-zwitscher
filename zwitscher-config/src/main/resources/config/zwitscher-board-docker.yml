@@ -11,7 +11,10 @@ endpoints:
   health:
     enabled: true
     sensitive: false
-
+    web:
+      exposure:
+        include: '*'
+      base-path: /admin
 logging:
   level:
     com.netflix.discovery: INFO
@@ -19,13 +22,10 @@ logging:
     org.springframework.web: DEBUG
     de.qaware.cloud.nativ.zwitscher: DEBUG
 
-management:
-  context-path: /admin
-
 eureka:
   instance:
     # register with IP addresses (required for deployment in Kubernetes?)
     preferIpAddress: true
     leaseRenewalIntervalInSeconds: 10
-    statusPageUrlPath: ${management.context-path}/info
-    healthCheckUrlPath: ${management.context-path}/health
+    statusPageUrlPath: ${management.endpoints.web.base-path}/info
+    healthCheckUrlPath: ${management.endpoints.web.base-path}/health

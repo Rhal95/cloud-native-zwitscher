@@ -8,12 +8,12 @@ management.endpoint:
     enabled: true
   health:
     enabled: true
-
+management:
+  endpoints:
+    web:
+      base-path: /admin
 server:
   port: 8888
-
-management.server.servlet:
-  context-path: /admin
 
 logging:
   level:
@@ -25,8 +25,8 @@ eureka:
     # register with IP addresses (required for deployment in Kubernetes?)
     preferIpAddress: true
     leaseRenewalIntervalInSeconds: 10
-    statusPageUrlPath: ${management.server.servlet.context-path}/info
-    healthCheckUrlPath: ${management.server.servlet.context-path}/health
+    statusPageUrlPath: ${management.endpoints.web.base-path}/info
+    healthCheckUrlPath: ${management.endpoints.web.base-path}/health
 
 ---
 spring:

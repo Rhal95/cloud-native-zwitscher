@@ -94,6 +94,6 @@ public class ZwitscherBoardController {
     }
 
     private void populateTweets(String q, Model viewModel) {
-        viewModel.addAttribute("tweets", new ReactiveDataDriverContextVariable(Flux.concat(zwitscherClient.findByQ(q)), 1));
+        viewModel.addAttribute("tweets", new ReactiveDataDriverContextVariable(zwitscherClient.findByQ(q)));
     }
 }

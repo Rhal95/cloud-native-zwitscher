@@ -10,13 +10,15 @@ import de.qaware.cloud.nativ.zwitscher.service.tweet.ZwitscherMessage;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-@RabbitListener(queues = "#{requestQueue.name}", containerFactory = "MyRabbitListenerContainerFactory")
+@RabbitListener(queues = "#{requestQueue.name}", containerFactory = "MyRabbitListenerContainerFactory", concurrency = "2-8")
 @Component
+@Profile("rabbit")
 public class RabbitMQListener {
 
     @Autowired
@@ -30,7 +32,7 @@ public class RabbitMQListener {
 
     @RabbitHandler
     public Mono<List<ZwitscherMessage>> handleZwitscher(ZwitscherRequest request) {
-        return zwitscherController.handleZwitscher(request.getQuery(), request.getNumber());
+        return zwitscherController.handleZwitscher(request.getQuery(), request.getNumber()).collectList();
     }
 
     @RabbitHandler

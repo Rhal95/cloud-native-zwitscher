@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public class ZwitscherController {
         this.zwitscherClient = zwitscherClient;
     }
 
-    public Mono<List<ZwitscherMessage>> handleZwitscher(String query, int pagesize) {
-        return zwitscherClient.search(query, pagesize).collectList();
+    public Flux<ZwitscherMessage> handleZwitscher(String query, int pagesize) {
+        return zwitscherClient.search(query, pagesize);
     }
 }

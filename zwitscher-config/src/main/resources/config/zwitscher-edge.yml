@@ -19,7 +19,6 @@ logging:
     de.qaware.cloud.nativ.zwitscher: DEBUG
 
 management:
-  server.servlet.context-path: /admin
   endpoints:
     info:
       enabled: true
@@ -27,10 +26,14 @@ management:
       enabled: true
     health:
       enabled: true
+    web:
+      exposure:
+        include: '*'
+      base-path: /admin
 eureka:
   instance:
     # register with IP addresses (required for deployment in Kubernetes?)
     preferIpAddress: true
     leaseRenewalIntervalInSeconds: 10
-    statusPageUrlPath: ${management.server.servlet.context-path}/info
-    healthCheckUrlPath: ${management.server.servlet.context-path}/health
+    statusPageUrlPath: ${management.endpoints.web.base-path}/info
+    healthCheckUrlPath: ${management.endpoints.web.base-path}/health

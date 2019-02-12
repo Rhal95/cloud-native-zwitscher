@@ -12,7 +12,10 @@ management:
       enabled: true
     health:
       enabled: true
-  server.servlet.context-path: /admin
+    web:
+      exposure:
+        include: '*'
+      base-path: /admin
 logging:
   level:
     com.netflix.discovery: INFO
@@ -28,5 +31,5 @@ eureka:
     # register with IP addresses (required for deployment in Kubernetes?)
     preferIpAddress: true
     leaseRenewalIntervalInSeconds: 10
-    statusPageUrlPath: ${management.server.servlet.context-path}/info
-    healthCheckUrlPath: ${management.server.servlet.context-path}/health
+    statusPageUrlPath: ${management.endpoints.web.base-path}/info
+    healthCheckUrlPath: ${management.endpoints.web.base-path}/health

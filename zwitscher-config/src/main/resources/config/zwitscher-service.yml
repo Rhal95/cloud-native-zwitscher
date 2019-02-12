@@ -6,7 +6,11 @@ management:
       enabled: true
     health:
       enabled: true
-  server.servlet.context-path: /admin
+    web:
+      exposure:
+        include: '*'
+      base-path: /admin
+
 
 logging:
   level:
@@ -20,10 +24,11 @@ eureka:
     # register with IP addresses (required for deployment in Kubernetes?)
     preferIpAddress: true
     leaseRenewalIntervalInSeconds: 10
-    statusPageUrlPath: ${management.server.servlet.context-path}/info
-    healthCheckUrlPath: ${management.server.servlet.context-path}/health
-
-spring:
+    statusPageUrlPath: ${management.endpoints.web.base-path}/info
+    healthCheckUrlPath: ${management.endpoints.web.base-path}/health
+  client:
+    healthcheck:
+      enabled: true
   social:
     twitter:
       appId: '{cipher}AQBSfX5qoZ9g1Qo0cCtj1WWSJBJyjz72ojQTCsMF8e30AwKCdb5qx2K33gWAWgCCMIwGXcWwA68EzI4zgLeZoAV3HirorC4fNqjU4M1MaXmuHSO7DGgheDBU+n1NzgWrmOVFxFdZjtdGFuARANxjQ53+al/ZhD9/+HPqMewH+lemOpEBlPpp0IAVBfactDRlCxwfFIn6qjON176nB6tz9BKLCAWFIR6OtBtP/oFZ6iao9SQCGWujNAkg3ALZpWf6TqwFUSdPfDhAwUaUAL2+XA3fGDy8xTljW+eEe+MHJzGc5mD+HqYBqiBnjFd+yiplKYY35OjyUEppKGvoZbKNwUpGFHx40MKQLCPLW9cT2ZEFUvZkF6d+5yobrkBcO2Pp9eWY1pst5CQj8qBs8jURo172'
