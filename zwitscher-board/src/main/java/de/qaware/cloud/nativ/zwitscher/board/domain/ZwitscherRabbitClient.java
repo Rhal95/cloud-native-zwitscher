@@ -64,7 +64,7 @@ public class ZwitscherRabbitClient implements ZwitscherClient{
     @HystrixCommand(fallbackMethod = "none")
     public Flux<Zwitscher> findByQ(final @Length(max = 500) String q) {
         AsyncRabbitTemplate.RabbitConverterFuture<List<Zwitscher>> request = rabbitTemplate
-                .convertSendAndReceiveAsType("app.zwitscher", "request", new ZwitscherRequest(q, 50), new ParameterizedTypeReference<List<Zwitscher>>() {
+                .convertSendAndReceiveAsType("app.zwitscher", "search", new ZwitscherRequest(q, 50), new ParameterizedTypeReference<List<Zwitscher>>() {
                 });
 
         return Mono.fromFuture(request.completable()).flatMapMany(Flux::fromIterable);

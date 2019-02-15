@@ -5,7 +5,6 @@ import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -15,24 +14,37 @@ import org.springframework.context.annotation.Profile;
 @Profile("rabbit")
 public class RabbitMQConfiguration {
 
+    Queue quoteQueue = QueueBuilder.nonDurable().autoDelete().build();
+    Queue zwitscherQueue = QueueBuilder.nonDurable().autoDelete().build();
+
     @Bean
     public Jackson2JsonMessageConverter messageConverter() {
         return new Jackson2JsonMessageConverter();
     }
 
     @Bean
-    public Queue requestQueue() {
-        return QueueBuilder.nonDurable().autoDelete().build();
+    public Queue quoteQueue() {
+        return quoteQueue;
     }
 
     @Bean
-    public TopicExchange exchange() {
-        return new TopicExchange("app.zwitscher");
+    Queue zwitscherQueue() {
+        return zwitscherQueue;
     }
 
     @Bean
-    public Binding binding(TopicExchange exchange, Queue queue) {
-        return BindingBuilder.bind(queue).to(exchange).with("request");
+    public DirectExchange exchange() {
+        return new DirectExchange("app.zwitscher");
+    }
+
+    @Bean
+    public Binding quoteBinding(DirectExchange exchange) {
+        return BindingBuilder.bind(quoteQueue).to(exchange).with("quote");
+    }
+
+    @Bean
+    public Binding zwitscherBinding(DirectExchange exchange) {
+        return BindingBuilder.bind(zwitscherQueue).to(exchange).with("search");
     }
 
     @Bean

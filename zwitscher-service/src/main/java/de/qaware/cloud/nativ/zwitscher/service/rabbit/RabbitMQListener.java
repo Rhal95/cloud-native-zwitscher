@@ -6,7 +6,6 @@ import de.qaware.cloud.nativ.zwitscher.service.quote.QuotesOnDesignController;
 import de.qaware.cloud.nativ.zwitscher.service.quote.RandomQuote;
 import de.qaware.cloud.nativ.zwitscher.service.tweet.ZwitscherController;
 import de.qaware.cloud.nativ.zwitscher.service.tweet.ZwitscherMessage;
-
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-@RabbitListener(queues = "#{requestQueue.name}", containerFactory = "MyRabbitListenerContainerFactory", concurrency = "2-8")
+
 @Component
 @Profile("rabbit")
 public class RabbitMQListener {
@@ -30,11 +29,13 @@ public class RabbitMQListener {
     private ZwitscherController zwitscherController;
     private QuotesOnDesignController quotesOnDesignController;
 
+    @RabbitListener(queues = "#{zwitscherQueue.name}", containerFactory = "MyRabbitListenerContainerFactory")
     @RabbitHandler
     public Mono<List<ZwitscherMessage>> handleZwitscher(ZwitscherRequest request) {
         return zwitscherController.handleZwitscher(request.getQuery(), request.getNumber()).collectList();
     }
 
+    @RabbitListener(queues = "#{quoteQueue.name}", containerFactory = "MyRabbitListenerContainerFactory")
     @RabbitHandler
     public Mono<RandomQuote> handleQuote(QuoteRequest request) {
         return quotesOnDesignController.getQuote();

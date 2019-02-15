@@ -46,7 +46,7 @@ public class QuoteRabbitClient implements QuoteClient{
     @HystrixCommand(fallbackMethod = "fallback", ignoreExceptions = Exception.class)
     public Mono<Quote> getNextQuote() {
         AsyncRabbitTemplate.RabbitConverterFuture<Quote> request = rabbitTemplate
-                .convertSendAndReceiveAsType("app.zwitscher", "request", new QuoteRequest(), new ParameterizedTypeReference<Quote>() {
+                .convertSendAndReceiveAsType("app.zwitscher", "quote", new QuoteRequest(), new ParameterizedTypeReference<Quote>() {
                 });
         return Mono.fromFuture(request.completable());
     }
