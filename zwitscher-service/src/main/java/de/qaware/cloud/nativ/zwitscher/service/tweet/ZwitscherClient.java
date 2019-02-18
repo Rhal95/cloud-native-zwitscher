@@ -26,9 +26,9 @@ package de.qaware.cloud.nativ.zwitscher.service.tweet;
 import java.util.Collection;
 
 /**
- * The ZwitscherRepository provides methods to work with ZwitscherMessages.
+ * The ZwitscherClient provides methods to work with ZwitscherMessages.
  */
-public interface ZwitscherRepository {
+public interface ZwitscherClient {
     /**
      * Find and return all ZwitscherMessages matching the given query.
      *

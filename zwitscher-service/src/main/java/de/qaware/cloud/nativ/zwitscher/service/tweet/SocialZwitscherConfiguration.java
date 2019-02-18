@@ -46,14 +46,14 @@ public class SocialZwitscherConfiguration {
 
     @Bean
     @Profile("native")
-    public ZwitscherRepository social(Twitter twitter){
-        return new SocialZwitscherRepository(twitter);
+    public ZwitscherClient social(Twitter twitter){
+        return new SocialZwitscherClient(twitter);
     }
 
     @Bean
     @Profile("test")
-    public ZwitscherRepository mocked(){
-        return new MockedZwitscherRepository();
+    public ZwitscherClient mocked(){
+        return new MockedZwitscherClient();
     }
 
 }

@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MockedZwitscherRepository implements ZwitscherRepository{
+public class MockedZwitscherClient implements ZwitscherClient {
 
     @Override
     public Collection<ZwitscherMessage> search(String q, int pageSize) {

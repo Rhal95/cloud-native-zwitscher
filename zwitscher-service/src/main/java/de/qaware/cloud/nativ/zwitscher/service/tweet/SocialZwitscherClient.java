@@ -31,7 +31,6 @@ import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.social.twitter.api.SearchResults;
 import org.springframework.social.twitter.api.Twitter;
-import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -44,7 +43,7 @@ import static java.util.stream.Collectors.toList;
  */
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class SocialZwitscherRepository implements ZwitscherRepository, HealthIndicator {
+public class SocialZwitscherClient implements ZwitscherClient, HealthIndicator {
 
     private final Twitter twitter;
 

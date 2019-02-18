@@ -47,7 +47,7 @@ import java.util.Collection;
 public class ZwitscherController {
 
     private final Counter counterService = Metrics.counter("services.system.tweets.invoked");
-    private final ZwitscherRepository repository;
+    private final ZwitscherClient repository;
 
     /**
      * Return ZwitscherMessages matching the given query.
