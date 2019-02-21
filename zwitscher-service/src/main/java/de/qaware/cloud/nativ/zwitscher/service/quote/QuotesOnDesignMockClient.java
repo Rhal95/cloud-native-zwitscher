@@ -10,15 +10,14 @@ import java.util.Random;
 @Component
 @Profile("test")
 public class QuotesOnDesignMockClient implements QuotesOnDesignClient {
-    private int minDelay = 20;
-    private int maxDelay = 500;
+    private int delay = 100;
 
     private Random random = new Random();
 
     @Override
     public RandomQuote getRandomQuote() {
         try {
-            Thread.sleep(minDelay + random.nextInt(maxDelay - minDelay));
+            Thread.sleep(delay);
         } catch (Exception e) {
             log.error("Error occured in the Sleeping Thread", e);
         }
